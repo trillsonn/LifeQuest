@@ -1,7 +1,7 @@
 {
-  "name": "MeMaster - AI Task Planner",
-  "short_name": "MeMaster",
-  "description": "AI-powered task planning and scheduling app to help you organize your perfect day",
+  "name": "Memaster",
+  "short_name": "Memaster",
+  "description": "Simple task management app to help you organize your day",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#15202B",
