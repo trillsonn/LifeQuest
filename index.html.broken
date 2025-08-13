@@ -430,7 +430,7 @@
         }
 
         /* Hide chat input bar on welcome screen */
-        body. .chat-input-bar {
+        body.welcome-active .chat-input-bar {
             display: block !important;
         }
 
@@ -3053,7 +3053,7 @@
     </style>
 </head>
 
-<body style="background: #15202B; color: white;">
+<body>
     <div class="mobile-container">
         <!-- Status Bar -->
         <div class="status-bar">
@@ -3478,7 +3478,7 @@
         }
 
         /* Hide chat input bar on welcome screen */
-        body. .chat-input-bar {
+        body.welcome-active .chat-input-bar {
             display: block !important;
         }
 
@@ -5978,7 +5978,7 @@
         }
 
         /* Bottom Navigation */
-<body style="background: #15202B; color: white;">
+<body>
     <div class="mobile-container">
         <!-- Status Bar -->
         <div class="status-bar">
@@ -5993,13 +5993,17 @@
         </div>
 
         <!-- Welcome Screen -->
+<div class="welcome-screen" id="welcomeScreen" onclick="showMainApp()" style="display: none !important;">
+            <div class="app-logo">
+                <i class="fas fa-crown"></i>
+            </div>
             <h1>Memaster 🚀 DEV</h1>
         </div>
 
         <!-- Main App Screen -->
         <div class="main-screen active" id="mainScreen" style="display: block !important;">
-            <div class="question-header">
-                <h2>What would you like to get done today?</h2>
+            <div class="question-header" style="display: block !important; visibility: visible !important; opacity: 1 !important;">
+                <h2 style="color: white !important; font-size: 24px !important;">What would you like to get done today?</h2>
             </div>
 
             <!-- Today's Goal Tasks Section -->
@@ -6420,7 +6424,7 @@
                 <p>Tell me what you want to get done today.<br>I'll create a todo list for you!</p>
             </div>
 
-            <div class="voice-transcript" id="voiceTranscript" style="display: block !important;">
+            <div class="voice-transcript" id="voiceTranscript" style="display: none;">
                 <div class="voice-transcript-text" id="transcriptText"></div>
             </div>
 
@@ -6428,10 +6432,10 @@
                 <button class="voice-control-btn btn-cancel" onclick="cancelVoiceInput()">
                     Cancel
                 </button>
-                <button class="voice-control-btn btn-stop" id="voiceStopBtn" onclick="stopVoiceInput()" style="display: block !important;">
+                <button class="voice-control-btn btn-stop" id="voiceStopBtn" onclick="stopVoiceInput()" style="display: none;">
                     Stop Recording
                 </button>
-                <button class="voice-control-btn btn-process" id="voiceProcessBtn" onclick="processVoiceInput()" style="display: block !important;">
+                <button class="voice-control-btn btn-process" id="voiceProcessBtn" onclick="processVoiceInput()" style="display: none;">
                     Create Tasks
                 </button>
             </div>
@@ -6495,7 +6499,7 @@
                         <i class="fas fa-play"></i>
                         Test AI Connection
                     </button>
-                    <div id="testResult" style="margin-top: 10px; font-size: 14px; padding: 10px; border-radius: 8px; display: block !important;"></div>
+                    <div id="testResult" style="margin-top: 10px; font-size: 14px; padding: 10px; border-radius: 8px; display: none;"></div>
                 </div>
             </div>
             
@@ -6567,7 +6571,7 @@
              </div>
              
                          <!-- Detected Tasks Display -->
-            <div class="detected-tasks-container" id="detectedTasksContainer" style="display: block !important;">
+            <div class="detected-tasks-container" id="detectedTasksContainer" style="display: none;">
                 <div class="detected-tasks-header">
                     <i class="fas fa-tasks"></i>
                     <span id="detectedTasksMessage">I found these tasks. Should I add them to your planner?</span>
@@ -6859,7 +6863,7 @@
         function showMainApp() {
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('mainScreen').classList.add('active');
-            document.body.classList.remove('');
+            document.body.classList.remove('welcome-active');
             initializeApp();
         }
 
