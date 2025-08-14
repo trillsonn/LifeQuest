@@ -846,6 +846,61 @@
             border-radius: 12px;
             margin-bottom: 12px;
             padding: 0;
+            transition: all 0.3s ease;
+            position: relative;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-appearance: none;
+            outline: none;
+        }
+        
+        .goal-item-in-today * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent !important;
+            pointer-events: none;
+        }
+        
+        .goal-item-in-today .goal-item-wrapper {
+            pointer-events: auto;
+        }
+        
+        .goal-item-in-today .goal-daily-checkbox {
+            pointer-events: auto;
+        }
+
+        .goal-label {
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: rgba(102, 126, 234, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        .goal-item-in-today.expanded {
+            background: rgba(102, 126, 234, 0.08);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .goal-item-in-today .todo-expanded-content {
+            background: rgba(102, 126, 234, 0.08);
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            padding: 16px;
+            border-radius: 0 0 12px 12px;
         }
 
         .goal-item-wrapper {
@@ -855,10 +910,15 @@
             position: relative;
             transition: transform 0.3s ease;
             width: 100%;
-            background: rgba(102, 126, 234, 0.05);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            padding: 0;
+            background: transparent;
+            padding: 16px;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .goal-content {
@@ -1703,10 +1763,11 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 20px;
+            padding: 0;
             margin-bottom: 16px;
             transition: all 0.3s ease;
             position: relative;
+            overflow: hidden;
         }
 
         .goal-item:hover {
@@ -1719,26 +1780,49 @@
             border-color: rgba(81, 207, 102, 0.3);
         }
 
+        .goal-main {
+            padding: 20px;
+        }
+
         .goal-header {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            margin-bottom: 12px;
-            padding-right: 10px;
+            margin-bottom: 16px;
+        }
+
+        .goal-title-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
         }
 
         .goal-title {
             font-size: 18px;
             font-weight: 600;
             color: #ffffff;
+            margin: 0;
             flex: 1;
-            margin-right: 12px;
             line-height: 1.3;
         }
 
         .goal-item.completed .goal-title {
             text-decoration: line-through;
             color: #51cf66;
+        }
+
+        .goal-progress-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .goal-progress-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+            min-width: 50px;
+            text-align: right;
         }
 
         .goal-content {
@@ -1780,26 +1864,52 @@
             margin-bottom: 12px;
         }
 
+        .goal-description {
+            color: #cccccc;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
         .goal-progress {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .goal-progress-bar {
-            flex: 1;
+            width: 100%;
             height: 8px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+            border-radius: 8px;
             overflow: hidden;
         }
 
         .goal-progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 4px;
+            border-radius: 8px;
             transition: width 0.3s ease;
+        }
+
+        .goal-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .goal-target-date {
+            color: #999;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .goal-categories {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .goal-progress-text {
@@ -3024,6 +3134,168 @@
             font-weight: 500;
         }
 
+        /* Frequency Selection Styles */
+        .frequency-options {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .frequency-btn {
+            flex: 1;
+            padding: 12px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #cccccc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .frequency-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .frequency-btn.active {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .frequency-btn i {
+            font-size: 16px;
+        }
+
+        /* Frequency Count Selector Styles */
+        .frequency-count-selector {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+        }
+
+        .count-btn {
+            flex: 1;
+            min-width: 40px;
+            height: 44px;
+            padding: 8px 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #cccccc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .count-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .count-btn.active {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        /* Days Selector Styles */
+        .days-selector {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .day-btn {
+            padding: 12px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #cccccc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            text-align: center;
+            min-height: 60px;
+        }
+
+        .day-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .day-btn.active {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .day-short {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .day-full {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .frequency-summary {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .summary-text {
+            color: #cccccc;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Mobile responsive for days selector */
+        @media (max-width: 480px) {
+            .days-selector {
+                grid-template-columns: repeat(7, 1fr);
+                gap: 4px;
+            }
+            
+            .day-btn {
+                padding: 8px 4px;
+                min-height: 50px;
+            }
+            
+            .day-short {
+                font-size: 14px;
+            }
+            
+            .day-full {
+                font-size: 9px;
+            }
+        }
+
         .subtasks-section {
             margin-bottom: 30px;
         }
@@ -4077,20 +4349,85 @@
                     </div>
                 </div>
                 
-                <!-- Show in Today Tab -->
+                <!-- Goals automatically appear in Today tab based on frequency -->
+
+                <!-- Weekly Frequency -->
                 <div class="form-group">
                     <label class="form-label">
-                        <i class="fas fa-eye"></i>
-                        Visibility
+                        <i class="fas fa-calendar-week"></i>
+                        Frequency
                     </label>
-                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
-                        <input type="checkbox" id="showInTodayInput" style="width: 20px; height: 20px; cursor: pointer;">
-                        <label for="showInTodayInput" style="color: #ffffff; font-size: 15px; cursor: pointer; flex: 1; margin: 0;">
-                            Show this goal in the Today tab alongside daily tasks
-                        </label>
+                    <div class="frequency-options">
+                        <button type="button" class="frequency-btn active" data-frequency="daily">
+                            <span>Daily</span>
+                        </button>
+                        <button type="button" class="frequency-btn" data-frequency="weekly">
+                            <span>Weekly Schedule</span>
+                        </button>
+                        <button type="button" class="frequency-btn" data-frequency="flexible">
+                            <span>X Times/Week</span>
+                        </button>
                     </div>
-                    <div style="font-size: 12px; color: #999; margin-top: 8px; line-height: 1.4;">
-                        <i class="fas fa-info-circle"></i> When enabled, this goal will appear in your Today view to keep it visible while working on daily tasks.
+                </div>
+
+                <!-- Flexible Frequency Count (shown when X Times/Week is selected) -->
+                <div class="form-group" id="flexibleFrequencyGroup" style="display: none;">
+                    <label class="form-label">
+                        <i class="fas fa-hashtag"></i>
+                        Times per Week
+                    </label>
+                    <div class="frequency-count-selector">
+                        <button type="button" class="count-btn" data-count="1">1</button>
+                        <button type="button" class="count-btn" data-count="2">2</button>
+                        <button type="button" class="count-btn active" data-count="3">3</button>
+                        <button type="button" class="count-btn" data-count="4">4</button>
+                        <button type="button" class="count-btn" data-count="5">5</button>
+                        <button type="button" class="count-btn" data-count="6">6</button>
+                        <button type="button" class="count-btn" data-count="7">7</button>
+                    </div>
+                    <div class="frequency-summary" id="flexibleSummary">
+                        <span class="summary-text">Appears daily - complete 3 times per week</span>
+                    </div>
+                </div>
+
+                <!-- Days of Week (shown when Weekly Schedule is selected) -->
+                <div class="form-group" id="daysOfWeekGroup" style="display: none;">
+                    <label class="form-label">
+                        <i class="fas fa-calendar-check"></i>
+                        Select Days
+                    </label>
+                    <div class="days-selector">
+                        <button type="button" class="day-btn" data-day="monday">
+                            <span class="day-short">M</span>
+                            <span class="day-full">Mon</span>
+                        </button>
+                        <button type="button" class="day-btn" data-day="tuesday">
+                            <span class="day-short">T</span>
+                            <span class="day-full">Tue</span>
+                        </button>
+                        <button type="button" class="day-btn" data-day="wednesday">
+                            <span class="day-short">W</span>
+                            <span class="day-full">Wed</span>
+                        </button>
+                        <button type="button" class="day-btn" data-day="thursday">
+                            <span class="day-short">T</span>
+                            <span class="day-full">Thu</span>
+                        </button>
+                        <button type="button" class="day-btn" data-day="friday">
+                            <span class="day-short">F</span>
+                            <span class="day-full">Fri</span>
+                        </button>
+                        <button type="button" class="day-btn" data-day="saturday">
+                            <span class="day-short">S</span>
+                            <span class="day-full">Sat</span>
+                        </button>
+                        <button type="button" class="day-btn" data-day="sunday">
+                            <span class="day-short">S</span>
+                            <span class="day-full">Sun</span>
+                        </button>
+                    </div>
+                    <div class="frequency-summary" id="frequencySummary">
+                        <span class="summary-text">Select days to work on this goal</span>
                     </div>
                 </div>
             </div>
@@ -4523,8 +4860,8 @@
             const dateKey = selectedDate.toISOString().split('T')[0];
             const todayTodos = todos.filter(todo => todo.date === dateKey);
             
-            // Get goals that should show in today tab
-            const todayGoals = goals.filter(goal => goal.showInToday && !goal.completed);
+            // Get goals that should show in today tab (respects weekly schedule)
+            const todayGoals = goals.filter(goal => shouldShowGoalToday(goal, selectedDate));
             
             // Sort todos: uncompleted first, then completed
             const sortedTodos = todayTodos.sort((a, b) => {
@@ -4538,8 +4875,11 @@
             
             todoList.innerHTML = '';
             
+            // Track overall numbering for all items (goals + tasks) - v2024
+            let itemNumber = 1;
+            
             // Render goals first if any exist
-            todayGoals.forEach((goal, index) => {
+            todayGoals.forEach((goal, goalIndex) => {
                 const li = document.createElement('li');
                 li.className = 'goal-item-in-today';
                 li.dataset.goalId = goal.id;
@@ -4571,9 +4911,10 @@
                 `;
 
                 const goalHTML = `
-                    <div class="goal-item-wrapper">
+                    <div class="goal-label">Goal</div>
+                    <div class="goal-item-wrapper" onclick="toggleGoalExpansionInToday('${goal.id}')">
                         <div class="goal-content">
-                            <div class="goal-number">${index + 1}.</div>
+                            <div class="goal-number">${itemNumber}.</div>
                             <div class="goal-text">
                                 <div class="goal-title-compact">
                                     <span style="font-weight: 600; color: #667eea;">${goal.title}</span>
@@ -4585,10 +4926,12 @@
                              onclick="toggleGoalDailyTask('${goal.id}'); event.stopPropagation(); return false;">
                         </div>
                     </div>
+                    ${goalExpandedHTML}
                 `;
                 
                 li.innerHTML = goalHTML;
                 todoList.appendChild(li);
+                itemNumber++; // Increment after each goal
             });
             
             sortedTodos.forEach((todo, index) => {
@@ -4635,7 +4978,7 @@
                              style="cursor: pointer;">
                             <div class="todo-left-content">
                                 <div class="todo-main-row">
-                                    <div class="todo-number">${index + todayGoals.length + 1}.</div>
+                                    <div class="todo-number">${itemNumber}.</div>
                                     <div class="todo-text">${todo.text}</div>
 
                                 </div>
@@ -4663,6 +5006,7 @@
                 
                 li.innerHTML = todoHTML;
                 todoList.appendChild(li);
+                itemNumber++; // Increment after each task
             });
             
             // Ensure text selection is prevented on newly rendered todos
@@ -7073,6 +7417,9 @@
         let goals = [];
         let selectedGoalCategories = [];
         let currentEditingGoalId = null;
+        let selectedFrequency = 'daily';
+        let selectedDays = [];
+        let weeklyCount = 3;
 
         // Load goals from localStorage
         async function loadGoals() {
@@ -7116,8 +7463,9 @@
             modal.classList.add('active');
             document.body.classList.add('modal-open');
             
-            // Focus the title input
+            // Initialize frequency handlers
             setTimeout(() => {
+                initializeFrequencyHandlers();
                 document.getElementById('goalTitleInput').focus();
             }, 300);
         }
@@ -7138,7 +7486,7 @@
             document.getElementById('goalProgressInput').value = '0';
             document.getElementById('progressDisplay').textContent = '0%';
             document.getElementById('goalCategoryInput').value = '';
-            document.getElementById('showInTodayInput').checked = false;
+            // Goals automatically appear in Today tab based on frequency
             
             // Reset priority
             selectedPriority = 'medium';
@@ -7147,6 +7495,162 @@
             // Reset categories
             selectedGoalCategories = [];
             updateGoalCategoriesDisplay();
+            
+            // Reset frequency settings
+            selectedFrequency = 'daily';
+            selectedDays = [];
+            weeklyCount = 3;
+            updateFrequencyButtons();
+            updateDaysDisplay();
+            updateCountButtons();
+        }
+
+        // Initialize frequency event handlers
+        function initializeFrequencyHandlers() {
+            // Frequency button handlers
+            document.querySelectorAll('.frequency-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const frequency = this.dataset.frequency;
+                    selectFrequency(frequency);
+                });
+            });
+
+            // Day button handlers
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const day = this.dataset.day;
+                    toggleDay(day);
+                });
+            });
+
+            // Count button handlers
+            document.querySelectorAll('.count-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const count = parseInt(this.dataset.count);
+                    selectWeeklyCount(count);
+                });
+            });
+        }
+
+        // Select frequency type
+        function selectFrequency(frequency) {
+            selectedFrequency = frequency;
+            updateFrequencyButtons();
+            
+            const daysGroup = document.getElementById('daysOfWeekGroup');
+            const flexibleGroup = document.getElementById('flexibleFrequencyGroup');
+            
+            // Hide all groups first
+            daysGroup.style.display = 'none';
+            flexibleGroup.style.display = 'none';
+            
+            if (frequency === 'weekly') {
+                daysGroup.style.display = 'block';
+            } else if (frequency === 'flexible') {
+                flexibleGroup.style.display = 'block';
+                updateFlexibleSummary();
+            } else {
+                // Daily mode - clear selections
+                selectedDays = [];
+                updateDaysDisplay();
+            }
+        }
+
+        // Update frequency button states
+        function updateFrequencyButtons() {
+            document.querySelectorAll('.frequency-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.frequency === selectedFrequency) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Toggle day selection
+        function toggleDay(day) {
+            const index = selectedDays.indexOf(day);
+            if (index > -1) {
+                selectedDays.splice(index, 1);
+            } else {
+                selectedDays.push(day);
+            }
+            updateDaysDisplay();
+            updateFrequencySummary();
+        }
+
+        // Update day button states
+        function updateDaysDisplay() {
+            document.querySelectorAll('.day-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (selectedDays.includes(btn.dataset.day)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Select weekly count
+        function selectWeeklyCount(count) {
+            weeklyCount = count;
+            updateCountButtons();
+            updateFlexibleSummary();
+        }
+
+        // Update count button states
+        function updateCountButtons() {
+            document.querySelectorAll('.count-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.count) === weeklyCount) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        // Update flexible frequency summary
+        function updateFlexibleSummary() {
+            const summaryEl = document.querySelector('#flexibleSummary .summary-text');
+            if (!summaryEl) return;
+            summaryEl.textContent = `Appears daily - complete ${weeklyCount} times per week`;
+        }
+
+        // Update frequency summary text
+        function updateFrequencySummary() {
+            const summaryEl = document.querySelector('.summary-text');
+            if (!summaryEl) return;
+
+            if (selectedDays.length === 0) {
+                summaryEl.textContent = 'Select days to work on this goal';
+            } else if (selectedDays.length === 7) {
+                summaryEl.textContent = 'Daily - appears every day';
+            } else {
+                const dayNames = {
+                    'monday': 'Mon', 'tuesday': 'Tue', 'wednesday': 'Wed',
+                    'thursday': 'Thu', 'friday': 'Fri', 'saturday': 'Sat', 'sunday': 'Sun'
+                };
+                const selectedDayNames = selectedDays.map(day => dayNames[day]).join(', ');
+                summaryEl.textContent = `${selectedDays.length} times per week: ${selectedDayNames}`;
+            }
+        }
+
+        // Check if a goal should be shown today based on its frequency settings
+        function shouldShowGoalToday(goal, date = new Date()) {
+            // Don't show completed goals
+            if (goal.completed) {
+                return false;
+            }
+
+            // If frequency is daily or flexible, show every day
+            if (!goal.frequency || goal.frequency === 'daily' || goal.frequency === 'flexible') {
+                return true;
+            }
+
+            // For weekly frequency, check if today is in scheduled days
+            if (goal.frequency === 'weekly' && goal.scheduledDays) {
+                const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+                const todayName = dayNames[date.getDay()];
+                return goal.scheduledDays.includes(todayName);
+            }
+
+            return true; // Default to showing
         }
 
         // Update progress display
@@ -7160,7 +7664,7 @@
             const description = document.getElementById('goalDescriptionInput').value.trim();
             const targetDate = document.getElementById('goalTargetDateInput').value;
             const progress = parseInt(document.getElementById('goalProgressInput').value);
-            const showInToday = document.getElementById('showInTodayInput').checked;
+            // Goals automatically appear in Today tab based on frequency
             
             if (!title) {
                 showToast('❌ Please enter a goal title');
@@ -7168,6 +7672,12 @@
                 return;
             }
             
+            // Validate weekly frequency - must select at least one day
+            if (selectedFrequency === 'weekly' && selectedDays.length === 0) {
+                showToast('❌ Please select at least one day for weekly schedule');
+                return;
+            }
+
             const goal = {
                 id: currentEditingGoalId || Date.now().toString() + Math.random().toString(36).substr(2, 9),
                 title: title,
@@ -7177,7 +7687,10 @@
                 progress: progress,
                 categories: [...selectedGoalCategories],
                 completed: progress >= 100,
-                showInToday: showInToday,
+                // Goals automatically appear in Today tab based on frequency
+                frequency: selectedFrequency,
+                scheduledDays: selectedFrequency === 'weekly' ? [...selectedDays] : [],
+                weeklyCount: selectedFrequency === 'flexible' ? weeklyCount : null,
                 createdAt: currentEditingGoalId ? (goals.find(g => g.id === currentEditingGoalId)?.createdAt || new Date().toISOString()) : new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
@@ -7221,27 +7734,35 @@
                 goalElement.className = `goal-item ${goal.completed ? 'completed' : ''}`;
                 goalElement.innerHTML = `
                     <div class="goal-content" onclick="toggleGoalExpansion('${goal.id}')">
-                        <div class="goal-header">
-                            <div class="goal-title">${goal.title}</div>
-                            <div class="goal-priority ${goal.priority}">${goal.priority.toUpperCase()}</div>
-                        </div>
-                        
-                        ${goal.description ? `<div class="goal-description">${goal.description}</div>` : ''}
-                        
-                        <div class="goal-progress">
-                            <div class="goal-progress-bar">
-                                <div class="goal-progress-fill" style="width: ${goal.progress}%"></div>
+                        <div class="goal-main">
+                            <div class="goal-header">
+                                <div class="goal-title-container">
+                                    <h3 class="goal-title">${goal.title}</h3>
+                                    <span class="goal-priority ${goal.priority}">${goal.priority.toUpperCase()}</span>
+                                </div>
+                                <div class="goal-progress-container">
+                                    <div class="goal-progress-text">${goal.progress}%</div>
+                                </div>
                             </div>
-                            <div class="goal-progress-text">${goal.progress}%</div>
+                            
+                            ${goal.description ? `<div class="goal-description">${goal.description}</div>` : ''}
+                            
+                            <div class="goal-progress">
+                                <div class="goal-progress-bar">
+                                    <div class="goal-progress-fill" style="width: ${goal.progress}%"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="goal-meta">
+                                ${goal.targetDate ? `<div class="goal-target-date">
+                                    <i class="fas fa-calendar"></i> ${new Date(goal.targetDate).toLocaleDateString()}
+                                </div>` : ''}
+                                
+                                ${goal.categories.length > 0 ? `<div class="goal-categories">
+                                    ${goal.categories.map(cat => `<span class="category-tag">${cat}</span>`).join('')}
+                                </div>` : ''}
+                            </div>
                         </div>
-                        
-                        ${goal.targetDate ? `<div style="color: #999; font-size: 12px; margin-top: 8px;">
-                            <i class="fas fa-calendar"></i> Target: ${new Date(goal.targetDate).toLocaleDateString()}
-                        </div>` : ''}
-                        
-                        ${goal.categories.length > 0 ? `<div style="margin-top: 12px;">
-                            ${goal.categories.map(cat => `<span class="category-tag">${cat}</span>`).join('')}
-                        </div>` : ''}
                     </div>
                     
                     <div class="goal-actions">
@@ -7276,7 +7797,7 @@
             document.getElementById('goalDescriptionInput').value = goal.description || '';
             document.getElementById('goalTargetDateInput').value = goal.targetDate || '';
             document.getElementById('goalProgressInput').value = goal.progress.toString();
-            document.getElementById('showInTodayInput').checked = goal.showInToday || false;
+            // Goals automatically appear in Today tab based on frequency
             updateProgressDisplay(goal.progress);
             
             // Set priority
@@ -7286,6 +7807,34 @@
             // Set categories
             selectedGoalCategories = [...goal.categories];
             updateGoalCategoriesDisplay();
+            
+            // Set frequency settings
+            selectedFrequency = goal.frequency || 'daily';
+            selectedDays = goal.scheduledDays || [];
+            weeklyCount = goal.weeklyCount || 3;
+            
+            // Initialize frequency handlers and update UI
+            setTimeout(() => {
+                initializeFrequencyHandlers();
+                updateFrequencyButtons();
+                updateDaysDisplay();
+                updateCountButtons();
+                updateFrequencySummary();
+                updateFlexibleSummary();
+                
+                // Show/hide selectors based on frequency
+                const daysGroup = document.getElementById('daysOfWeekGroup');
+                const flexibleGroup = document.getElementById('flexibleFrequencyGroup');
+                
+                daysGroup.style.display = 'none';
+                flexibleGroup.style.display = 'none';
+                
+                if (selectedFrequency === 'weekly') {
+                    daysGroup.style.display = 'block';
+                } else if (selectedFrequency === 'flexible') {
+                    flexibleGroup.style.display = 'block';
+                }
+            }, 100);
             
             // Update modal
             const modal = document.getElementById('goalModal');
@@ -7383,6 +7932,48 @@
             console.log('🎯 toggleGoalExpansion called for goal:', goalId);
             event.preventDefault();
             event.stopPropagation();
+            
+            const goalItem = document.querySelector(`[data-goal-id="${goalId}"]`);
+            if (!goalItem) {
+                console.error('❌ Goal item not found:', goalId);
+                return;
+            }
+            
+            const expandedContent = goalItem.querySelector('.todo-expanded-content');
+            if (!expandedContent) {
+                console.error('❌ Expanded content not found for goal:', goalId);
+                return;
+            }
+            
+            const isExpanded = goalItem.classList.contains('expanded');
+            console.log('🎯 Goal expansion state:', isExpanded ? 'expanded' : 'collapsed');
+            
+            // Close all other expanded goals and tasks first
+            document.querySelectorAll('.todo-item.expanded, .goal-item-in-today.expanded').forEach(item => {
+                if (item !== goalItem) {
+                    item.classList.remove('expanded');
+                    const otherExpandedContent = item.querySelector('.todo-expanded-content');
+                    if (otherExpandedContent) {
+                        otherExpandedContent.style.display = 'none';
+                    }
+                }
+            });
+            
+            // Toggle current goal
+            if (isExpanded) {
+                goalItem.classList.remove('expanded');
+                expandedContent.style.display = 'none';
+                console.log('🎯 Goal collapsed');
+            } else {
+                goalItem.classList.add('expanded');
+                expandedContent.style.display = 'block';
+                console.log('🎯 Goal expanded');
+            }
+        }
+
+        // Toggle goal expansion in Today tab
+        function toggleGoalExpansionInToday(goalId) {
+            console.log('🎯 toggleGoalExpansionInToday called for goal:', goalId);
             
             const goalItem = document.querySelector(`[data-goal-id="${goalId}"]`);
             if (!goalItem) {
