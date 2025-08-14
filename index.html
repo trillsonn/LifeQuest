@@ -3751,6 +3751,18 @@
         .modal-btn:active {
             transform: scale(0.98);
         }
+        
+        /* Backup Button Styles */
+        .backup-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .backup-btn:active {
+            transform: translateY(0px);
+            filter: brightness(0.9);
+        }
     </style>
 </head>
 <body>
@@ -4256,6 +4268,34 @@
                         Test AI Connection
                     </button>
                     <div id="testResult" style="margin-top: 10px; font-size: 14px; padding: 10px; border-radius: 8px; display: none;"></div>
+                </div>
+                
+                <!-- Data Backup Section -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-database"></i>
+                        Data Backup & Recovery
+                    </label>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button type="button" class="backup-btn" onclick="DataLayer.exportData()" 
+                                style="padding: 12px 16px; background: rgba(81, 207, 102, 0.1); border: 1px solid rgba(81, 207, 102, 0.3); border-radius: 12px; color: #51cf66; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">
+                            <i class="fas fa-download"></i>
+                            Export Data (Download Backup)
+                        </button>
+                        
+                        <div style="position: relative;">
+                            <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="DataLayer.importData(this)">
+                            <button type="button" class="backup-btn" onclick="document.getElementById('importFileInput').click()" 
+                                    style="width: 100%; padding: 12px 16px; background: rgba(102, 126, 234, 0.1); border: 1px solid rgba(102, 126, 234, 0.3); border-radius: 12px; color: #667eea; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500;">
+                                <i class="fas fa-upload"></i>
+                                Import Data (Restore from Backup)
+                            </button>
+                        </div>
+                        
+                        <div style="font-size: 12px; color: #999; line-height: 1.4; padding: 8px 12px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <i class="fas fa-info-circle"></i> Your data is automatically saved in multiple locations. Use export to create manual backups or import to restore from a backup file.
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -7421,28 +7461,89 @@
         let selectedDays = [];
         let weeklyCount = 3;
 
-        // Load goals from localStorage
+        // Load goals with fallback strategies
         async function loadGoals() {
             try {
+                // Try IndexedDB first
+                try {
+                    const idbGoals = await DataLayer.loadFromIndexedDB('goals');
+                    if (idbGoals && idbGoals.length > 0) {
+                        goals = idbGoals;
+                        renderGoals();
+                        updateGoalsStats();
+                        console.log('✅ Loaded', goals.length, 'goals from IndexedDB');
+                        return;
+                    }
+                } catch (idbError) {
+                    console.warn('⚠️ IndexedDB load failed for goals:', idbError);
+                }
+                
+                // Fallback to localStorage
                 const savedGoals = JSON.parse(localStorage.getItem('memaster_goals')) || [];
-                goals = savedGoals;
+                if (savedGoals.length > 0) {
+                    goals = savedGoals;
+                    renderGoals();
+                    updateGoalsStats();
+                    console.log('✅ Loaded', goals.length, 'goals from localStorage');
+                    return;
+                }
+                
+                // Try backup localStorage
+                const backupGoals = JSON.parse(localStorage.getItem('memaster_goals_backup')) || [];
+                if (backupGoals.length > 0) {
+                    goals = backupGoals;
+                    renderGoals();
+                    updateGoalsStats();
+                    console.log('✅ Loaded', goals.length, 'goals from backup localStorage');
+                    return;
+                }
+                
+                // Last resort: sessionStorage
+                const sessionGoals = JSON.parse(sessionStorage.getItem('memaster_goals')) || [];
+                if (sessionGoals.length > 0) {
+                    goals = sessionGoals;
+                    renderGoals();
+                    updateGoalsStats();
+                    console.log('✅ Loaded', goals.length, 'goals from sessionStorage');
+                    return;
+                }
+                
+                console.log('📝 No existing goals found, starting fresh');
+                goals = [];
                 renderGoals();
                 updateGoalsStats();
-                console.log('✅ Loaded', goals.length, 'goals from localStorage');
+                
             } catch (error) {
                 console.error('❌ Failed to load goals:', error);
                 goals = [];
+                renderGoals();
+                updateGoalsStats();
             }
         }
 
-        // Save goals to localStorage
+        // Save goals with robust persistence
         async function saveGoals() {
             try {
+                // Primary storage
                 localStorage.setItem('memaster_goals', JSON.stringify(goals));
-                console.log('✅ Goals saved to localStorage');
+                localStorage.setItem('memaster_goals_backup', JSON.stringify(goals));
+                localStorage.setItem('memaster_goals_timestamp', Date.now().toString());
+                
+                // Backup storage
+                sessionStorage.setItem('memaster_goals', JSON.stringify(goals));
+                
+                // IndexedDB backup
+                try {
+                    await DataLayer.saveToIndexedDB('goals', goals);
+                } catch (idbError) {
+                    console.warn('⚠️ IndexedDB save failed for goals:', idbError);
+                }
+                
+                console.log('✅ Goals saved to multiple storage locations');
                 updateGoalsStats();
             } catch (error) {
                 console.error('❌ Failed to save goals:', error);
+                DataLayer.showStorageWarning();
             }
         }
 
@@ -8215,22 +8316,193 @@
             console.log('📡 Gone offline');
         });
 
-        // Simple Data Layer - uses localStorage only
+        // Enhanced Data Layer with robust persistence
         const DataLayer = {
-            // Save todos
+            // Save todos with backup strategies
             async saveTodos(todosArray) {
-                console.log('💾 Saving todos:', todosArray.length, 'items to localStorage');
-                localStorage.setItem('memaster_todos', JSON.stringify(todosArray));
-                console.log('✅ Todos saved locally');
-                return true;
+                console.log('💾 Saving todos:', todosArray.length, 'items');
+                
+                try {
+                    // Primary: localStorage
+                    localStorage.setItem('memaster_todos', JSON.stringify(todosArray));
+                    localStorage.setItem('memaster_todos_backup', JSON.stringify(todosArray));
+                    localStorage.setItem('memaster_todos_timestamp', Date.now().toString());
+                    
+                    // Secondary: sessionStorage as backup
+                    sessionStorage.setItem('memaster_todos', JSON.stringify(todosArray));
+                    
+                    // Third: Try to save to IndexedDB for more robust storage
+                    try {
+                        await this.saveToIndexedDB('todos', todosArray);
+                    } catch (idbError) {
+                        console.warn('⚠️ IndexedDB save failed:', idbError);
+                    }
+                    
+                    console.log('✅ Todos saved to multiple storage locations');
+                    return true;
+                } catch (error) {
+                    console.error('❌ Failed to save todos:', error);
+                    this.showStorageWarning();
+                    return false;
+                }
             },
 
-            // Load todos
+            // Load todos with fallback strategies
             async loadTodos() {
-                console.log('📂 Loading todos from localStorage...');
-                const localTodos = JSON.parse(localStorage.getItem('memaster_todos')) || [];
-                console.log('✅ Loaded', localTodos.length, 'todos from localStorage');
-                return localTodos;
+                console.log('📂 Loading todos from storage...');
+                
+                try {
+                    // Try IndexedDB first (most robust)
+                    try {
+                        const idbTodos = await this.loadFromIndexedDB('todos');
+                        if (idbTodos && idbTodos.length > 0) {
+                            console.log('✅ Loaded', idbTodos.length, 'todos from IndexedDB');
+                            return idbTodos;
+                        }
+                    } catch (idbError) {
+                        console.warn('⚠️ IndexedDB load failed:', idbError);
+                    }
+                    
+                    // Fallback to localStorage
+                    const localTodos = JSON.parse(localStorage.getItem('memaster_todos')) || [];
+                    if (localTodos.length > 0) {
+                        console.log('✅ Loaded', localTodos.length, 'todos from localStorage');
+                        return localTodos;
+                    }
+                    
+                    // Try backup localStorage
+                    const backupTodos = JSON.parse(localStorage.getItem('memaster_todos_backup')) || [];
+                    if (backupTodos.length > 0) {
+                        console.log('✅ Loaded', backupTodos.length, 'todos from backup localStorage');
+                        return backupTodos;
+                    }
+                    
+                    // Last resort: sessionStorage
+                    const sessionTodos = JSON.parse(sessionStorage.getItem('memaster_todos')) || [];
+                    if (sessionTodos.length > 0) {
+                        console.log('✅ Loaded', sessionTodos.length, 'todos from sessionStorage');
+                        return sessionTodos;
+                    }
+                    
+                    console.log('📝 No existing todos found, starting fresh');
+                    return [];
+                    
+                } catch (error) {
+                    console.error('❌ Failed to load todos:', error);
+                    return [];
+                }
+            },
+            
+            // IndexedDB operations for robust storage
+            async saveToIndexedDB(key, data) {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open('MeMasterDB', 1);
+                    
+                    request.onerror = () => reject(request.error);
+                    
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains('data')) {
+                            db.createObjectStore('data', { keyPath: 'key' });
+                        }
+                    };
+                    
+                    request.onsuccess = (event) => {
+                        const db = event.target.result;
+                        const transaction = db.transaction(['data'], 'readwrite');
+                        const store = transaction.objectStore('data');
+                        
+                        store.put({ key: key, value: data, timestamp: Date.now() });
+                        
+                        transaction.oncomplete = () => resolve();
+                        transaction.onerror = () => reject(transaction.error);
+                    };
+                });
+            },
+            
+            async loadFromIndexedDB(key) {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open('MeMasterDB', 1);
+                    
+                    request.onerror = () => reject(request.error);
+                    
+                    request.onsuccess = (event) => {
+                        const db = event.target.result;
+                        const transaction = db.transaction(['data'], 'readonly');
+                        const store = transaction.objectStore('data');
+                        const getRequest = store.get(key);
+                        
+                        getRequest.onsuccess = () => {
+                            const result = getRequest.result;
+                            resolve(result ? result.value : null);
+                        };
+                        
+                        getRequest.onerror = () => reject(getRequest.error);
+                    };
+                });
+            },
+            
+            // Show warning if storage is having issues
+            showStorageWarning() {
+                if (!this.warningShown) {
+                    this.warningShown = true;
+                    showToast('⚠️ Data storage may be limited. Consider exporting your data.', 5000);
+                }
+            },
+            
+            // Export data for backup
+            exportData() {
+                const data = {
+                    todos: JSON.parse(localStorage.getItem('memaster_todos')) || [],
+                    goals: JSON.parse(localStorage.getItem('memaster_goals')) || [],
+                    scheduledTasks: JSON.parse(localStorage.getItem('memaster_scheduled_tasks')) || {},
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `memaster-backup-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showToast('✅ Data exported successfully!');
+            },
+            
+            // Import data from backup
+            async importData(fileInput) {
+                const file = fileInput.files[0];
+                if (!file) return;
+                
+                try {
+                    const text = await file.text();
+                    const data = JSON.parse(text);
+                    
+                    if (data.todos) {
+                        await this.saveTodos(data.todos);
+                        todos = data.todos;
+                        renderTodos();
+                    }
+                    
+                    if (data.goals) {
+                        localStorage.setItem('memaster_goals', JSON.stringify(data.goals));
+                        goals = data.goals;
+                        renderGoals();
+                    }
+                    
+                    if (data.scheduledTasks) {
+                        localStorage.setItem('memaster_scheduled_tasks', JSON.stringify(data.scheduledTasks));
+                        scheduledTasks = data.scheduledTasks;
+                    }
+                    
+                    showToast('✅ Data imported successfully!');
+                    
+                } catch (error) {
+                    console.error('❌ Import failed:', error);
+                    showToast('❌ Failed to import data. Please check the file format.');
+                }
             }
         };
 
@@ -10359,6 +10631,116 @@ ${responseStyle === 'concise' ? 'Respond in 1 sentence.' : responseStyle === 'de
                 window.installToastElement.remove();
                 window.installToastElement = null;
             }
+        }
+        
+        // Storage health monitoring
+        async function checkStorageHealth() {
+            console.log('🔍 Checking storage health...');
+            
+            const healthReport = {
+                localStorage: false,
+                sessionStorage: false,
+                indexedDB: false,
+                quotaEstimate: null
+            };
+            
+            // Test localStorage
+            try {
+                const testKey = 'memaster_health_test';
+                localStorage.setItem(testKey, 'test');
+                localStorage.removeItem(testKey);
+                healthReport.localStorage = true;
+            } catch (error) {
+                console.warn('⚠️ localStorage unavailable:', error);
+            }
+            
+            // Test sessionStorage
+            try {
+                const testKey = 'memaster_session_test';
+                sessionStorage.setItem(testKey, 'test');
+                sessionStorage.removeItem(testKey);
+                healthReport.sessionStorage = true;
+            } catch (error) {
+                console.warn('⚠️ sessionStorage unavailable:', error);
+            }
+            
+            // Test IndexedDB
+            try {
+                await DataLayer.saveToIndexedDB('health_test', { test: true });
+                healthReport.indexedDB = true;
+            } catch (error) {
+                console.warn('⚠️ IndexedDB unavailable:', error);
+            }
+            
+            // Check storage quota
+            if ('storage' in navigator && 'estimate' in navigator.storage) {
+                try {
+                    healthReport.quotaEstimate = await navigator.storage.estimate();
+                    const usedMB = (healthReport.quotaEstimate.usage / (1024 * 1024)).toFixed(2);
+                    const totalMB = (healthReport.quotaEstimate.quota / (1024 * 1024)).toFixed(2);
+                    console.log(`📊 Storage usage: ${usedMB}MB / ${totalMB}MB`);
+                } catch (error) {
+                    console.warn('⚠️ Could not get storage estimate:', error);
+                }
+            }
+            
+            console.log('📊 Storage Health Report:', healthReport);
+            
+            // Show warning if storage is limited
+            const workingStorages = [healthReport.localStorage, healthReport.sessionStorage, healthReport.indexedDB].filter(Boolean).length;
+            if (workingStorages < 2) {
+                showToast('⚠️ Limited storage available. Consider exporting your data regularly.', 7000);
+            }
+            
+            return healthReport;
+        }
+        
+        // Initialize enhanced data persistence
+        async function initializeDataPersistence() {
+            console.log('🚀 Initializing enhanced data persistence...');
+            
+            // Check storage health
+            await checkStorageHealth();
+            
+            // Load existing data
+            try {
+                await loadGoals();
+                todos = await DataLayer.loadTodos();
+                renderTodos();
+                
+                console.log('✅ Data persistence initialized successfully');
+                
+                // Show success message if we have data
+                if (todos.length > 0 || goals.length > 0) {
+                    setTimeout(() => {
+                        showToast(`📋 Loaded ${todos.length} tasks and ${goals.length} goals`, 3000);
+                    }, 1000);
+                }
+                
+            } catch (error) {
+                console.error('❌ Failed to initialize data persistence:', error);
+                showToast('❌ Error loading saved data. Starting fresh.', 5000);
+            }
+        }
+        
+        // Auto-backup every 5 minutes
+        setInterval(async () => {
+            if (todos.length > 0 || goals.length > 0) {
+                console.log('💾 Auto-backup triggered...');
+                await DataLayer.saveTodos(todos);
+                await saveGoals();
+                console.log('✅ Auto-backup completed');
+            }
+        }, 5 * 60 * 1000); // 5 minutes
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeDataPersistence);
+        
+        // Initialize immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeDataPersistence);
+        } else {
+            initializeDataPersistence();
         }
     </script>
 </body>
